@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>13in13 Protocol Dashboard</title>
-    <!-- PWA & Home Screen Icon Tags -->
+  <title>15in15 Protocol Dashboard</title>
+  <!-- PWA & Home Screen Icon Tags -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="icon.png">
   <link rel="apple-touch-icon" href="icon.png">
@@ -21,13 +21,13 @@
 
   <div class="max-w-4xl mx-auto space-y-3.5 sm:space-y-5">
 
-    <!-- Top Header Card: Contains Protocol Info + Both Matching Progress Bars -->
+    <!-- Top Header Card -->
     <header class="bg-slate-800/80 p-4 sm:p-5 rounded-2xl border border-slate-700/60 shadow-lg space-y-4">
       <div>
         <h1 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-          <i data-lucide="zap" class="text-emerald-400 w-5 h-5 sm:w-6 sm:h-6"></i> 13in13 Protocol
+          <i data-lucide="zap" class="text-emerald-400 w-5 h-5 sm:w-6 sm:h-6"></i> 15in15 Protocol
         </h1>
-        <p class="text-slate-400 text-xs mt-0.5">Sept 1 (82.55kg) → Dec 7 (70.00kg)</p>
+        <p class="text-slate-400 text-xs mt-0.5">Sept 1 (82.55kg) → Dec 31 (67.55kg)</p>
       </div>
 
       <!-- 1. Timeline Progress Bar -->
@@ -41,8 +41,8 @@
           <div id="progress-dot" class="absolute w-4 h-4 bg-emerald-400 border-2 border-slate-900 rounded-full shadow-md transition-all duration-500 -ml-2" style="left: 0%;"></div>
         </div>
         <div class="flex justify-between text-[11px] text-slate-400 font-medium pt-0.5">
-          <span id="days-elapsed">Day 0 of 97</span>
-          <span id="days-remaining">97 Days Remaining</span>
+          <span id="days-elapsed">Day 0 of 121</span>
+          <span id="days-remaining">121 Days Remaining</span>
         </div>
       </div>
 
@@ -57,8 +57,8 @@
           <div id="weight-progress-dot" class="absolute w-4 h-4 bg-emerald-400 border-2 border-slate-900 rounded-full shadow-md transition-all duration-500 -ml-2" style="left: 0%;"></div>
         </div>
         <div class="flex justify-between text-[11px] text-slate-400 font-medium pt-0.5">
-          <span id="weight-loss-lost">0.00 kg of 12.55 kg lost</span>
-          <span id="weight-loss-target">12.55 kg remaining</span>
+          <span id="weight-loss-lost">0.00 kg of 15.00 kg lost</span>
+          <span id="weight-loss-target">15.00 kg remaining</span>
         </div>
       </div>
     </header>
@@ -66,17 +66,14 @@
     <!-- Unified Single Row: Weight Today | Ideal Today | Today's Status -->
     <div class="bg-slate-800/80 p-3 sm:p-4 rounded-2xl border border-slate-700/60 shadow-lg">
       <div class="grid grid-cols-3 gap-1 text-center items-center divide-x divide-slate-700/60">
-        <!-- Col 1: Weight Today -->
         <div class="px-1">
           <span class="text-slate-400 text-[10px] sm:text-xs uppercase tracking-wider font-semibold block whitespace-nowrap">Weight Today</span>
           <div id="metric-latest" class="text-base sm:text-xl font-bold text-white mt-0.5 whitespace-nowrap">-- kg</div>
         </div>
-        <!-- Col 2: Ideal Today -->
         <div class="px-1">
           <span class="text-slate-400 text-[10px] sm:text-xs uppercase tracking-wider font-semibold block whitespace-nowrap">Ideal Today</span>
           <div id="metric-ideal" class="text-base sm:text-xl font-bold text-slate-300 mt-0.5 whitespace-nowrap">-- kg</div>
         </div>
-        <!-- Col 3: Status -->
         <div class="px-1 flex flex-col items-center justify-center">
           <span class="text-slate-400 text-[10px] sm:text-xs uppercase tracking-wider font-semibold block mb-1 whitespace-nowrap">Today's Status</span>
           <div id="metric-status" class="whitespace-nowrap">
@@ -104,7 +101,7 @@
     <!-- Progress Graph -->
     <section class="bg-slate-800/80 p-4 sm:p-5 rounded-2xl border border-slate-700/60 shadow-lg">
       <h2 class="text-base sm:text-lg font-semibold text-white mb-3 flex items-center gap-2">
-        <i data-lucide="trending-down" class="text-emerald-400 w-4 h-4 sm:w-5 sm:h-5"></i> 13in13 Progress Graph
+        <i data-lucide="trending-down" class="text-emerald-400 w-4 h-4 sm:w-5 sm:h-5"></i> 15in15 Progress Graph
       </h2>
       <div class="w-full h-64 sm:h-72">
         <canvas id="weightChart"></canvas>
@@ -148,17 +145,31 @@
   </div>
 
   <script>
-    // Protocol Configuration
-    const START_DATE = new Date('2026-09-01');
-    const END_DATE = new Date('2026-12-07');
-    const START_WEIGHT = 82.55;
-    const END_WEIGHT = 70.00;
+    // Local Date String Helper (Avoids ISO/UTC timezone offsets)
+    function getLocalDateString(d = new Date()) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
 
-    // Total Protocol Days = 97
+    // Parse YYYY-MM-DD as local date object
+    function parseLocalDate(dateStr) {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    // Protocol Configuration (15in15 Protocol: Sept 1 -> Dec 31)
+    const START_DATE = parseLocalDate('2026-09-01');
+    const END_DATE = parseLocalDate('2026-12-31');
+    const START_WEIGHT = 82.55;
+    const END_WEIGHT = 67.55; // 15.00 kg total loss
+
+    // Total Protocol Days = 121
     const TOTAL_DAYS = Math.round((END_DATE - START_DATE) / (1000 * 60 * 60 * 24));
     const DAILY_DROP = (START_WEIGHT - END_WEIGHT) / TOTAL_DAYS;
 
-    // Full Complete Baseline Data History (Aug 31 to Oct 06)
+    // Full Baseline History through Oct 23
     const DEFAULT_HISTORY = [
       { date: '2026-08-31', weight: 82.95 },
       { date: '2026-09-01', weight: 82.55 },
@@ -196,22 +207,38 @@
       { date: '2026-10-03', weight: 79.50 },
       { date: '2026-10-04', weight: 78.90 },
       { date: '2026-10-05', weight: 79.00 },
-      { date: '2026-10-06', weight: 78.90 }
+      { date: '2026-10-06', weight: 78.90 },
+      { date: '2026-10-07', weight: 78.90 },
+      { date: '2026-10-08', weight: 78.85 },
+      { date: '2026-10-09', weight: 78.85 },
+      { date: '2026-10-10', weight: 78.85 },
+      { date: '2026-10-11', weight: 78.70 },
+      { date: '2026-10-12', weight: 78.10 },
+      { date: '2026-10-13', weight: 78.50 },
+      { date: '2026-10-14', weight: 77.95 },
+      { date: '2026-10-15', weight: 78.05 },
+      { date: '2026-10-16', weight: 77.95 },
+      { date: '2026-10-17', weight: 77.95 },
+      { date: '2026-10-18', weight: 77.85 },
+      { date: '2026-10-19', weight: 77.95 },
+      { date: '2026-10-20', weight: 78.10 },
+      { date: '2026-10-21', weight: 78.70 },
+      { date: '2026-10-22', weight: 78.95 },
+      { date: '2026-10-23', weight: 77.50 }
     ];
 
-    let storedData = localStorage.getItem('13in13_tracker_entries');
+    let storedData = localStorage.getItem('15in15_tracker_entries');
     let entries = storedData ? JSON.parse(storedData) : DEFAULT_HISTORY;
 
-    // Force overwrite if stored data length is behind the complete baseline history
     if (!storedData || JSON.parse(storedData).length < DEFAULT_HISTORY.length) {
       entries = DEFAULT_HISTORY;
-      localStorage.setItem('13in13_tracker_entries', JSON.stringify(DEFAULT_HISTORY));
+      localStorage.setItem('15in15_tracker_entries', JSON.stringify(DEFAULT_HISTORY));
     }
 
     let chartInstance = null;
 
     function calculateIdealWeight(dateStr) {
-      const targetDate = new Date(dateStr);
+      const targetDate = parseLocalDate(dateStr);
       const diffDays = Math.round((targetDate - START_DATE) / (1000 * 60 * 60 * 24));
       if (diffDays < 0) return START_WEIGHT;
       if (diffDays > TOTAL_DAYS) return END_WEIGHT;
@@ -220,23 +247,19 @@
 
     function formatDate(dateStr) {
       const options = { month: 'short', day: 'numeric' };
-      return new Date(dateStr).toLocaleDateString(undefined, options);
+      return parseLocalDate(dateStr).toLocaleDateString(undefined, options);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      document.getElementById('input-date').valueAsDate = new Date();
+      document.getElementById('input-date').value = getLocalDateString();
       updateTimeProgressBar();
       renderDashboard();
     });
 
     function updateTimeProgressBar() {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const startDate = new Date(START_DATE);
-      startDate.setHours(0, 0, 0, 0);
-
-      const diffDays = Math.round((today - startDate) / (1000 * 60 * 60 * 24));
+      const today = parseLocalDate(getLocalDateString());
+      const diffDays = Math.round((today - START_DATE) / (1000 * 60 * 60 * 24));
       const daysPassed = Math.max(0, Math.min(TOTAL_DAYS, diffDays));
       const daysLeft = Math.max(0, TOTAL_DAYS - daysPassed);
       const pct = Math.min(100, Math.max(0, (daysPassed / TOTAL_DAYS) * 100)).toFixed(1);
@@ -269,7 +292,7 @@
     });
 
     function saveEntries() {
-      localStorage.setItem('13in13_tracker_entries', JSON.stringify(entries));
+      localStorage.setItem('15in15_tracker_entries', JSON.stringify(entries));
     }
 
     function renderDashboard() {
@@ -279,11 +302,11 @@
     }
 
     function renderMetrics() {
-      const todayStr = new Date().toISOString().split('T')[0];
+      const todayStr = getLocalDateString();
       const idealToday = calculateIdealWeight(todayStr);
       document.getElementById('metric-ideal').textContent = `${idealToday} kg`;
 
-      const totalTargetLoss = +(START_WEIGHT - END_WEIGHT).toFixed(2); // 12.55 kg
+      const totalTargetLoss = +(START_WEIGHT - END_WEIGHT).toFixed(2); // 15.00 kg
 
       if (entries.length === 0) {
         document.getElementById('metric-latest').textContent = '-- kg';
@@ -299,7 +322,6 @@
       const latest = entries[entries.length - 1];
       document.getElementById('metric-latest').textContent = `${latest.weight} kg`;
 
-      // Total Weight Progress Calculations
       const currentLoss = Math.max(0, +(START_WEIGHT - latest.weight).toFixed(2));
       const remainingWeight = Math.max(0, +(latest.weight - END_WEIGHT).toFixed(2));
       const weightPct = Math.min(100, Math.max(0, (currentLoss / totalTargetLoss) * 100)).toFixed(1);
@@ -363,7 +385,7 @@
 
       let curr = new Date(START_DATE);
       while (curr <= END_DATE) {
-        const dStr = curr.toISOString().split('T')[0];
+        const dStr = getLocalDateString(curr);
         dateLabels.push(dStr);
         idealData.push(calculateIdealWeight(dStr));
         curr.setDate(curr.getDate() + 1);
@@ -381,7 +403,7 @@
           labels: dateLabels.map(d => formatDate(d)),
           datasets: [
             {
-              label: '13in13 Target (kg)',
+              label: '15in15 Target (kg)',
               data: idealData,
               borderColor: '#38bdf8',
               borderWidth: 1.5,
@@ -409,12 +431,12 @@
           scales: {
             x: {
               grid: { color: 'rgba(51, 65, 85, 0.3)' },
-              ticks: { color: '#94a3b8', maxTicksLimit: 10 }
+              ticks: { color: '#94a3b8', maxTicksLimit: 12 }
             },
             y: {
               grid: { color: 'rgba(51, 65, 85, 0.3)' },
               ticks: { color: '#94a3b8' },
-              min: 68,
+              min: 65,
               max: 84
             }
           },
@@ -437,8 +459,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entries, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `13in13_backup_${new Date().toISOString().split('T')[0]}.json`);
-      document.body.appendChild(downloadAnchor);
+      downloadAnchor.setAttribute("download", `15in15_backup_${getLocalDateString()}.json`);
       downloadAnchor.click();
       downloadAnchor.remove();
     });
@@ -460,7 +481,7 @@
             entries = importedData;
             saveEntries();
             renderDashboard();
-            alert('13in13 data imported successfully!');
+            alert('15in15 data imported successfully!');
           }
         } catch (err) {
           alert('Invalid JSON backup file.');
